@@ -1,0 +1,51 @@
+{extend name="public/base" /}
+{//因为base是公共模块所以用到公共模块的视图控制器都要继承公共模板控制器}
+<!-- 标题开始 -->
+{block name='title'}
+{//<!-- 如果catename有值就是点到了栏目 我们让标题显示栏目名称 否则显示默认名称 webinfo为base共享模板里的 -->}
+{$catename|default='仄辛'}--{$webInfo.webname}
+{/block}
+<!-- 标题end -->
+
+<!-- 内容开始 -->
+{block name='content'}
+<div class="jumbotron">
+    <h1 class="animated fadeInDown">仄辛！</h1>
+    <p class="animated shake">开源的一个博客系统，目前使用ThinkPHP5.1+jquery+layui+bootstrap+mysql开发，网站暂时只提供博文浏览搜索 用户登录注册 用户评论 用户投稿 后台管理-栏目-文章-评论-用户功能，后期可能对接到移动端。
+    </p>
+    <h2 class="animated fadeInUp">blog: <a href="#"
+            target="_blank">zexin.ga</a></h2>
+</div>
+<div class="row">
+    <div class="col-sm-12 col-md-8">    
+        <div class="page-header h3">{$catename|default='文章列表'}</div>
+        <div class="article-list">
+            {volist name='articles' id='vo'}
+            <div class="article-list-item">
+                <a href="{:url('index/article/info',['id'=>$vo.id])}" class="title">{$vo.title}</a>
+                <div class="info">
+                    <span class="author">作者：{$vo.author}</span>-
+                    <span class="time">发布时间：{$vo.create_time}</span>-
+                    <span class="read">阅读：{$vo.click}</span>-
+                    <span class="comment">评论：{$vo.comm_num}</span>
+                </div>
+            </div>
+            {/volist}
+        </div>
+        <nav class="">
+            {$articles->render()|raw}
+        </nav>
+    </div>
+    <div class="col-sm-12 col-md-4">
+        <div class="page-header h3">推荐文章</div>
+        <div class="topic-list">
+            {volist name='topArticle' id='vo'}
+            <div class="topic-list-item">
+                <a href="{:url('index/article/info',['id'=>$vo.id])}" class="title">{$vo.title}</a>
+            </div>
+            {/volist}
+        </div>
+    </div>
+</div>
+{/block}
+<!--内容结束  -->

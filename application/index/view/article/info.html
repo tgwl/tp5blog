@@ -1,0 +1,108 @@
+{extend name="public/base" /}
+
+{block name="title"}
+{$articleInfo.title}--{$webInfo.webname}
+{/block}
+
+{block name="content"}
+<div class="col-sm-12 col-md-8">
+    <h1 class="article-title">{$articleInfo.title}</h1>
+    <div class="status">{$articleInfo.click}阅读-{$articleInfo.comm_num}评论-作者：{$articleInfo.author}
+        {//这里strtoarry用的是我们自己定义的公共方法 因为标签我们是用|分割的 这里我们再转换过来}
+        {volist name="articleInfo.tags|strToArray" id="vo"}
+        <span class="label label-default">{$vo}</span>
+        {/volist}
+    </div>
+    <div class="article-content">
+        <blockquote>
+            {$articleInfo.desc}
+        </blockquote>
+        {$articleInfo.content|raw}
+    </div>
+    <div class="article-comment">
+        <div class="page-header"><b>相关评论</b></div>
+        <div class="comment-content">
+            <form action="#">
+                {// 此处分别取出文章用户id 和当前登录用户id 并且隐藏起来方便我们在控制器操作}
+                <input type="hidden" name="article_id" value="{$articleInfo.id}">
+                <input type="hidden" name="member_id" value="{:session('index.id')}">
+                <div class="form-group">
+                    <!-- 评论内容 -->
+                    <textarea class="form-control" id="content" name="content" rows="5" cols=""></textarea>
+                </div>
+                <div class="form-group pull-right">
+                    <button type="submit" class="btn btn-primary" id="comment">评论（请认真评论）</button>
+                </div>
+            </form>
+        </div>
+        <div class="clearfix"></div>
+        <div class="comment-list">
+            {//此处id就相当于comemnt表的数据}
+            {volist name='articleInfo.comments' id='vo'}
+            <div class="comment-list-item">
+                {//此处vo相当于comemnt表 然后通过comemnt表取出member表数据下的nickname 因为comemnt模型下有member方法对应用户表所以可以这样调用}
+                <div class="info">{$vo.member.nickname}<small>{$vo.create_time}</small></div>
+                <div class="content">{$vo.content}</div>
+            </div>
+            {/volist}
+        </div>
+    </div>
+</div>
+<div class="col-sm-12 col-md-4">
+    <div class="affix">
+        <div class="page-header h3">推荐文章</div>
+        <div class="topic-list">
+            {volist name='top_article' id='vo'} 
+            <div class="topic-list-item">
+                <a href="{:url('index/article/info', ['id' => $vo.id])}" class="title">{$vo.title}</a>
+            </div>
+            {/volist}
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name='js'}
+<script>
+    $(function () {
+        $('#comment').click(function () {
+            // 当sesion 的index键id值存在（是登录状态）才可以评论 因
+            if ("{:session('?index.id')}") {
+                $.ajax({
+                    url: "{:url('index/article/comm')}",
+                    type: 'post',
+                    data: $('form').serialize(),
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.code == 1) {
+                            layer.msg(data.msg, {
+                                icon: 6,
+                                time: 2000
+                            }, function () {
+                                //刷新当前页面
+                                location.href = location.href;
+                            })
+                        } else {
+                            layer.open({
+                                title: "用户评论失败",
+                                content: data.msg,
+                                icon: 5,
+                                anim: 6
+                            });
+                        }
+                    }
+                });
+            } else {
+                layer.msg('请先登录再评论', {
+                    icon: 5,
+                    time: 2000
+                },function(){
+                    // 如果没有登录 跳转到登录页面
+                    location.href= "{:url('index/index/login')}"
+                });
+            }
+            return false;
+        })
+    })
+</script>
+{/block}

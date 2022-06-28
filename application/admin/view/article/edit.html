@@ -1,0 +1,150 @@
+{include file='public/_head'/}
+<!-- /Navbar -->
+<!-- Main Container -->
+<div class="main-container container-fluid">
+	<!-- Page Container -->
+	<div class="page-container">
+
+		<!-- Page Sidebar -->
+
+		{include file='public/_left'/}
+		<!-- /Page Sidebar -->
+		<!-- Page Content -->
+		<div class="page-content">
+			<!-- Page Breadcrumb -->
+			<div class="page-breadcrumbs">
+				<ul class="breadcrumb">
+					<li>
+						<i class="fa fa-home"></i>&nbsp;文章管理
+					</li>
+					<li>文章编辑</li>
+				</ul>
+			</div>
+			<!-- /Page Breadcrumb -->
+			<!-- Page Body -->
+			<div class="page-body">
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="widget radius-bordered">
+							<div class="widget-header bordered-bottom bordered-themeprimary">
+								<span class="widget-caption">文章编辑</span>
+							</div>
+							<div class="widget-body">
+								<form action="" class="form-horizontal">
+									<!-- 这里是传来id我们修改用得到 -->
+									<input type="hidden" name="id" value="{$articleInfo.id}">
+									<div class="form-group">
+										<label for="title" class="control-label col-sm-2">文章标题</label>
+										<div class="col-sm-6">
+											<input type="text" class="form-control" id="title" name="title"
+												placeholder="文章标题" value="{$articleInfo.title}" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="desc" class="col-sm-2 control-label col-sm-2">文章概要</label>
+										<div class="col-sm-6">
+											<textarea type="text" class="form-control" id="desc" name="desc"
+												placeholder="文章描述" cols="30" rows="5">{$articleInfo.desc}</textarea>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="tags" class="control-label col-sm-2">标签</label>
+										<div class="col-sm-6">
+											<input type="text" class="form-controller" placeholder="标签" name="tags"
+												value="{$articleInfo.tags}" id="tags">
+											<span class="help-block">标签以|来分割</span>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="checkbox col-sm-offset-2 col-sm-6">
+											<label>
+												<!-- 如果传进来的文章信息is_top为一那么就是推荐 添加一个checked属性就是选中 那么value我们改成1 -->
+												<input type="checkbox" name="is_top" {if $articleInfo.is_top ==1 }checked {/if} value="1">
+												<span class="text">是否推荐</span>
+											</label>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="cate_id" class="control-label col-sm-2">所属导航</label>
+										<div class="col-sm-6">
+											<select name="cate_id" class="form-control">
+												<option value="">请选择</option>
+												{{volist name='cates' id='vo'}
+												<!--r如果传进来的文章信息cateid 和当前页面的id一致那就添加selected属性 选中 然后显示值 -->
+												<option value="{$vo.id}" {if $articleInfo.cate_id==$vo.id}selected{/if}>
+													{$vo.catename}</option>
+												{/volist}}
+											</select>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="content" class="control-label col-sm-2">文章内容</label>
+										<div class="col-sm-6">
+											<textarea name="content" id="content" cols="30" rows="10"
+												class="">{$articleInfo.content}</textarea>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-offset-2 col-sm-6">
+											<button class="btn btn-primary" type="submit" id="articleEdit">修改</button>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /Page Body -->
+		</div>
+		<!-- /Page Content -->
+
+	</div>
+	<!-- /Page Container -->
+	<!-- Main Container -->
+
+</div>
+
+
+{include file='public/_js'/}
+<!-- 引入富文本编辑器 -->
+<script src="/static/lib/ueditor/ueditor.config.js"></script>
+<script src="/static/lib/ueditor/ueditor.all.js"></script>
+<script>
+	$(function () {
+		// 给id为content添加一个富文本编辑器
+		UE.getEditor('content');
+		// 修改按钮
+		
+        $('#articleEdit').click(function () {
+            $.ajax({
+                url:"{:url('admin/article/edit')}",
+                type:'post',
+                data:$('form').serialize(),
+                dataType:'json',
+                success:function (data) {
+                    if (data.code == 1) {
+                        layer.msg(data.msg, {
+                            icon:6,
+                            time:2000
+                        }, function () {
+                            location.href = data.url;
+                        });
+                    }else {
+                        layer.open({
+                            title:'文章编辑失败',
+                            content:data.msg,
+                            icon:5,
+                            anim:6
+                        });
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+<!--  /Body -->
+
+</html>
