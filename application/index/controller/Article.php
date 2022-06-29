@@ -7,9 +7,9 @@ use think\Controller;
 class Article extends Base
 {
     public function info()
-    { //文章详情页                       关联预载入   comemnts.member嵌套预载入因为comemnt模型里面有member方法关联member用户表
+    { //文章详情页                       关联预载入  { comemnts.member}嵌套预载入因为comemnt模型里面有member方法关联member用户表
         $articleInfo = model('article')->with('comments,comments.member')->find(input('id'));
-        //    每次访问后click字段自增1 达到点击数增加的效果
+        //    每次访问后info页面 数据库click字段自增1 达到点击数增加的效果
         $articleInfo->setInc('click', 1);
         $top_article=model('article')->where('is_top',1)->select();
         $viewData = [

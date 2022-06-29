@@ -78,7 +78,7 @@ class Index extends Base
         }
     }
 
-    public function search(){ //搜索
+    public function search(){ //搜索  搜索使用的是action直接提交 所以路由后面不用定义类似id一样的值 因为keyword直接传进来
         $where[]=['title','like','%'.input('keyword').'%']; //定义模糊搜索
         $catename = input('keyword');
         $articles = model('article')->where($where)->order('create_time','desc')->paginate(10);

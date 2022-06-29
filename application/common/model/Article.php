@@ -80,7 +80,7 @@ class Article extends Model
         }
     }
 
-    public function post($data){
+    public function post($data){//投稿功能
 
         $validate = new \app\common\validate\Article();
         if (!$validate->scene('post')->check($data)) {

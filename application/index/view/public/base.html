@@ -33,7 +33,7 @@
 					{/volist}
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
-					{// 如果session index键下有id数据 显示下面}
+					{// 如果session index键下有id数据 则为登录状态 显示下面}
 					{if session('?index.id')}
 					<li><a href="#">{:session('index.nickname')}</a></li>
 					<li><a href="#" id="loginout">退出</a></li>
